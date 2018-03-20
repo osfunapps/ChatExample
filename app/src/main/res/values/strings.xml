@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">NEW CHATTT</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_copy">Copy</string>
+    <string name="copied_message">Message copied!</string>
+    <string name="date_header_today">Today</string>
+    <string name="date_header_yesterday">Yesterday</string>
+    <string name="input_message">Say something cool</string>
+    <string name="username">Name</string>
+    <string name="no_internet">No internet connection!</string>
+    <string name="disconnected_from_server">Disconnected from server!</string>
+    <string name="connection_error">Connection error!</string>
+    <string name="connected">Connected to server!</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+
+    <!-- facebook -->
+    <string name="facebook_app_id" translatable="false">2030611447197144</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb2030611447197144</string>
+
+
+    <!-- Tweeter -->
+    <string name="com.twitter.sdk.android.CONSUMER_KEY" translatable="false">ZzqL1dounpJ4VnhHGpeh5qPeK</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET" translatable="false">uOoxV7PnqjfUwA9bEcyts3kdHbQlRTiBg3fczmMMVcgHX38pzK</string>
+
+</resources>

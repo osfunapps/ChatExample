@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.osapps.chat"
+        minSdkVersion 16
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+
+    compile 'com.github.stfalcon:chatkit:0.2.1'
+    compile ('com.rocketchat.core:rocketchat-core:0.7.1.9') {
+        exclude group :'org.json', module: 'json'
+    }
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'jp.wasabeef:picasso-transformations:2.1.2'
+
+    compile 'com.android.support:cardview-v7:25.3.1'
+
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
+    /*
+    facebook (don't forget to add mavenCentral() to the build.gradle also)
+    1) string resource
+    2) meta data in manifest
+    3) layout login in layout file
+    4) main activity implementations
+     */
+    implementation 'com.facebook.android:facebook-login:4.31.0'
+
+
+    /* Twitter
+    * 1) in Application:
+    *   Twitter.initialize(this);
+    *
+    * 2) <resources>
+        <string android:name="com.twitter.sdk.android.CONSUMER_KEY">XXXXXXXXXXX</string>
+        <string android:name="com.twitter.sdk.android.CONSUMER_SECRET">XXXXXXXXXXX</string>
+        </resources>
+
+      3) <com.twitter.sdk.android.core.identity.TwitterLoginButton
+     android:id="@+id/login_button"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content" />
+    *
+    * */
+
+    // Include all the Twitter APIs
+    compile 'com.twitter.sdk.android:twitter-core:3.1.1'
+    compile 'com.twitter.sdk.android:tweet-ui:3.1.1'
+
+    compile 'com.arasthel:asyncjob-library:1.0.3'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
