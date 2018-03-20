@@ -2,27 +2,25 @@ package com.osapps.chat;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.UiThread;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.osapps.chat.activity.MyAdapterActivity;
+import com.osapps.chat.socket.ChatRoom;
+import com.osapps.chat.socket.RocketChatClient;
+import com.osapps.chat.views.messageslist.MessagesList;
+import com.osapps.chat.views.messageslist.MessagesListAdapter;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.data.lightdb.collection.Collection;
 import com.rocketchat.common.data.lightdb.document.UserDocument;
-import com.rocketchat.core.ChatRoom;
-import com.rocketchat.core.RocketChatClient;
 import com.rocketchat.core.callback.HistoryCallback;
 import com.rocketchat.core.callback.LoginCallback;
 import com.rocketchat.core.callback.MessageCallback;
 import com.rocketchat.core.model.Token;
+import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessageInput;
-import com.stfalcon.chatkit.messages.MessagesList;
-import com.stfalcon.chatkit.messages.MessagesListAdapter;
 import com.stfalcon.chatkit.utils.DateFormatter;
 
 
@@ -32,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.osapps.chat.activity.MyAdapterActivity;
 import com.osapps.chat.application.RocketChatApplication;
 import com.osapps.chat.model.Message;
 import com.osapps.chat.model.User;
@@ -83,11 +80,8 @@ public class ChatActivity extends MyAdapterActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chat);
         super.onCreate(savedInstanceState);
-
         input = findViewById(R.id.input);
         messagesList = findViewById(R.id.messagesList);
-
-
         mainThreadHanlder = new Handler(getMainLooper());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         api = ((RocketChatApplication) getApplicationContext()).getRocketChatAPI();
@@ -137,7 +131,6 @@ public class ChatActivity extends MyAdapterActivity implements
 
     }
 
-    @UiThread
     void updateUserStatus(final String status) {
         mainThreadHanlder.post(new Runnable() {
             @Override
@@ -185,7 +178,8 @@ public class ChatActivity extends MyAdapterActivity implements
     }
 
     private void initAdapter() {
-        messagesAdapter = new MessagesListAdapter<>(api.getWebsocketImpl().getMyUserId(), null);
+
+        messagesAdapter = new MessagesListAdapter<>(api.getWebsocketImpl().getMyUserId());
         messagesAdapter.enableSelectionMode(this);
         messagesAdapter.setLoadMoreListener(this);
         messagesAdapter.setDateHeadersFormatter(this);
@@ -230,7 +224,6 @@ public class ChatActivity extends MyAdapterActivity implements
 
 
 
-    @UiThread
     void updateMessage(final ArrayList<Message> messages) {
         mainThreadHanlder.post(new Runnable() {
             @Override
@@ -240,7 +233,6 @@ public class ChatActivity extends MyAdapterActivity implements
         });
     }
 
-    @UiThread
     @Override
     public void onMessage(String roomId, final com.rocketchat.core.model.Message message) {
         mainThreadHanlder.post(new Runnable() {
@@ -271,7 +263,6 @@ public class ChatActivity extends MyAdapterActivity implements
     }
 
 
-    @UiThread
     void showConnectedSnackbar() {
         System.out.println("connected!");
       /*  Snackbar
@@ -299,7 +290,6 @@ public class ChatActivity extends MyAdapterActivity implements
         showConnectedSnackbar();
     }
 
-    @UiThread
     @Override
     public void onDisconnect(boolean closedByServer) {
         mainThreadHanlder.post(new Runnable() {
@@ -322,7 +312,6 @@ public class ChatActivity extends MyAdapterActivity implements
     }
 
 
-    @UiThread
     @Override
     public void onConnectError(final Throwable websocketException) {
         mainThreadHanlder.post(new Runnable() {
@@ -378,7 +367,6 @@ public class ChatActivity extends MyAdapterActivity implements
         mainThreadHanlder.post(new Runnable() {
             @Override
             public void run() {
-
 
         if (list.size() > 0) {
             lastTimestamp = new Date(list.get(list.size() - 1).timestamp());

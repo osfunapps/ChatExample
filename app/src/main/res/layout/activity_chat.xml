@@ -7,25 +7,50 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <com.osapps.chat.views.messageslist.MessagesList
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/input"
+
+        app:outcomingDefaultBubbleColor="@color/transparent"
+        app:incomingDefaultBubbleColor="@color/transparent"
+        app:outcomingTextColor="@color/black"
+        app:incomingTextColor="@color/black"
+        app:dateHeaderTextColor="@color/gray"
+
+
+
+        app:dateHeaderFormat="dd MMMM yyyy"
+        app:incomingDefaultBubblePressedColor="@color/ivory_dark"
+        app:incomingDefaultBubbleSelectedColor="@color/gray"
+        app:incomingDefaultImageOverlayPressedColor="@color/black_10"
+        app:incomingDefaultImageOverlaySelectedColor="@color/gray_transparent"
+        app:incomingTextLinkColor="@color/green"
+        app:incomingTextSize="15sp"
+        app:outcomingDefaultBubblePressedColor="@color/green_dark"
+        app:outcomingDefaultBubbleSelectedColor="@color/gray_dark_transparent"
+        app:outcomingDefaultImageOverlayPressedColor="@color/black_10"
+        app:outcomingDefaultImageOverlaySelectedColor="@color/gray_transparent"
+        app:outcomingTextLinkColor="@color/brown"
+        app:outcomingTextSize="15sp"
+        app:textAutoLink="all"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/input"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        />
+        android:background="@color/gray_light"/>
 
     <com.stfalcon.chatkit.messages.MessageInput
         android:id="@+id/input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        />
-
-    <com.stfalcon.chatkit.messages.MessagesList
-        android:id="@+id/messagesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/input" />
+        app:inputButtonDefaultBgColor="@color/green"
+        app:inputButtonDefaultBgPressedColor="@color/green_dark"
+        app:inputHint="@string/input_message" />
 
 </RelativeLayout>

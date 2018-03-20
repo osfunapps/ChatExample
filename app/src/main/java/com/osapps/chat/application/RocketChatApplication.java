@@ -2,10 +2,10 @@ package com.osapps.chat.application;
 
 import android.app.Application;
 
+import com.osapps.chat.socket.RocketChatClient;
 import com.rocketchat.common.network.ReconnectionStrategy;
 import com.rocketchat.common.utils.Logger;
 import com.rocketchat.common.utils.Utils;
-import com.rocketchat.core.RocketChatClient;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -16,17 +16,13 @@ public class RocketChatApplication extends Application {
 
     RocketChatClient client;
 
-    //shabat server url server server
+    //todo: ozvi server address
     //private static String serverurl = "http://weedleapps.co.il:3000/websocket";
 
-//   private static String serverurl = "http://34.214.236.242:32771/websocket";
-  //  private static String baseUrl = "http://weedle-caht-alb-external-304626034.us-west-2.elb.amazonaws.com/api/v1/";
+   private static String serverurl = "https://chat.weedleapps.co.il/websocket";
+    private static String baseUrl = "https://chat.weedleapps.co.il/api/v1/";
 
 
-
-
-    private static String serverurl = "wss://demo.rocket.chat/websocket";
-    private static String baseUrl = "https://demo.rocket.chat/api/v1/";
 
     public String token;
 

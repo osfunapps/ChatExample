@@ -7,13 +7,16 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.osapps.chat.socket.RocketChatClient;
+import com.osapps.chat.socket.callback.ChannelCreationCallback;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.listener.SimpleListCallback;
-import com.rocketchat.core.RocketChatClient;
 import com.rocketchat.core.callback.LoginCallback;
+import com.rocketchat.core.model.Room;
 import com.rocketchat.core.model.Subscription;
 import com.rocketchat.core.model.Token;
 
@@ -33,6 +36,7 @@ public class RoomActivity extends MyAdapterActivity {
 
     RecyclerView recyclerView;
     private Handler mainLooperHandler;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class RoomActivity extends MyAdapterActivity {
         api.getWebsocketImpl().getConnectivityManager().register(this);
         api.subscribeActiveUsers(null);
         api.subscribeUserData(null);
+
         mainLooperHandler = new Handler(getMainLooper());
         api.getSubscriptions(new SimpleListCallback<Subscription>() {
             @Override
@@ -59,6 +64,7 @@ public class RoomActivity extends MyAdapterActivity {
         });
         super.onCreate(savedInstanceState);
         afterViewsSet();
+
     }
 
     public void onGetSubscriptions(final List<Subscription> list) {
@@ -77,17 +83,55 @@ public class RoomActivity extends MyAdapterActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.clearAnimation();
+        //recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        getMenuInflater().inflate(R.menu.rooms_actions_menu, menu);
+        return true;
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == android.R.id.home) {
             onBackPressed();
+        }else if(i == R.id.action_add_channel){
+            addChannel();
         }
         return true;
+    }
+
+    private void addChannel() {
+        //create channel
+        //admin user "admin" "esof$Rocket5173"
+        api.createChannel("new_channel", new ChannelCreationCallback() {
+            @Override
+            public void onChannelCreated() {
+                api.getSubscriptions(new SimpleListCallback<Subscription>() {
+                    @Override
+                    public void onSuccess(List<Subscription> list) {
+                        RoomActivity.this.onGetSubscriptions(list);
+
+                    }
+
+                    @Override
+                    public void onError(RocketChatException error) {
+
+                    }
+                });
+            }
+
+
+            @Override
+            public void onError(RocketChatException error) {
+
+            }
+        });
     }
 
 

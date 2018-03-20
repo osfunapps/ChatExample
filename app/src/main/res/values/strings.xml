@@ -13,6 +13,8 @@
     <string name="connected">Connected to server!</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="add_channel">add channel</string>
+
 
     <!-- facebook -->
     <string name="facebook_app_id" translatable="false">2030611447197144</string>

@@ -19,10 +19,11 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.osapps.chat.activity.MyAdapterActivity;
 import com.osapps.chat.application.RocketChatApplication;
+import com.osapps.chat.socket.RocketChatClient;
+import com.osapps.chat.socket.callback.RegisterCallback;
 import com.osapps.chat.utils.AppUtils;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.network.Socket;
-import com.rocketchat.core.RocketChatClient;
 import com.rocketchat.core.callback.LoginCallback;
 import com.rocketchat.core.model.Token;
 import com.twitter.sdk.android.core.Callback;
@@ -72,6 +73,8 @@ public class LoginActivity extends MyAdapterActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         //connect().create().start();
         setContentView(R.layout.activity_login);
 
@@ -97,50 +100,7 @@ public class LoginActivity extends MyAdapterActivity {
         api.connect(this);
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
-
     }
-
-    private void signUp() {
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody formBody = new FormBody.Builder()
-                .add("username", "Zvi123")
-                .add("pass", "esofesof")
-                .add("name", "zvika")
-                .add("email", "ozv2i.i3nc@gmail.com")
-                .build();
-
-        Request request = new Request.Builder()
-                .url("http://weedle-caht-alb-external-304626034.us-west-2.elb.amazonaws.com/api/v1/users.register")
-                .post(formBody)
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        try {
-            Response response = client.newCall(request).execute();
-            // Do something with the response.
-            Log.i(TAG, "signUp: " + response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private AsyncJob.AsyncJobBuilder connect() {
-        return new AsyncJob.AsyncJobBuilder<Boolean>()
-                .doInBackground(new AsyncJob.AsyncAction<Boolean>() {
-                    @Override
-                    public Boolean doAsync() {
-                        signUp();
-                        return true;
-                    }
-                })
-                .doWhenFinished(new AsyncJob.AsyncResultAction<Boolean>() {
-                    @Override
-                    public void onResult(Boolean result) {
-                    }
-                });
-    }
-
 
     private void checkIfUserConnected() {
 
@@ -239,7 +199,7 @@ public class LoginActivity extends MyAdapterActivity {
 
     void onLoginButtonClicked() {
         if (api.getWebsocketImpl().getSocket().getState() == Socket.State.CONNECTED) {
-            api.login("ozshabat-1", "Esof1Esof1", new LoginCallback() {
+            api.login("itzik1", "itzik1", new LoginCallback() {
                 @Override
                 public void onLoginSuccess(Token token) {
                     Log.i(TAG, "onLoginSuccess: ");
