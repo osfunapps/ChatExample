@@ -13,6 +13,7 @@
     <string name="connected">Connected to server!</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
+    <string name="ok">Ok</string>
     <string name="add_channel">add channel</string>
 
 

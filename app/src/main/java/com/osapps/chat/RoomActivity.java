@@ -106,6 +106,7 @@ public class RoomActivity extends MyAdapterActivity {
         return true;
     }
 
+
     private void addChannel() {
         //create channel
         //admin user "admin" "esof$Rocket5173"
