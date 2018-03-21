@@ -1,4 +1,4 @@
-package com.osapps.chat.views.messageslist;
+package com.osapps.chat.utils.views.messageslist;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -20,7 +20,6 @@ import com.stfalcon.chatkit.commons.ViewHolder;
 import com.stfalcon.chatkit.commons.models.IMessage;
 import com.stfalcon.chatkit.commons.models.MessageContentType;
 import com.stfalcon.chatkit.utils.DateFormatter;
-import com.stfalcon.chatkit.utils.RoundedImageView;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;

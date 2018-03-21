@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <com.osapps.chat.views.messageslist.MessagesList
+    <com.osapps.chat.utils.views.messageslist.MessagesList
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

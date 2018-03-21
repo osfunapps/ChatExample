@@ -4,95 +4,57 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-import com.arasthel.asyncjob.AsyncJob;
 import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.osapps.chat.activity.MyAdapterActivity;
 import com.osapps.chat.application.RocketChatApplication;
+import com.osapps.chat.login.AuthenticationManager;
+import com.osapps.chat.login.LoginViewsManager;
 import com.osapps.chat.socket.RocketChatClient;
-import com.osapps.chat.socket.callback.ChannelCreationCallback;
-import com.osapps.chat.socket.callback.RegisterCallback;
 import com.osapps.chat.utils.AppUtils;
+import com.osapps.chat.login.LoginDialog;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.network.Socket;
 import com.rocketchat.core.callback.LoginCallback;
 import com.rocketchat.core.model.Token;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
 import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-import java.io.IOException;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.internal.http2.Header;
-
-public class LoginActivity extends MyAdapterActivity {
+public class LoginActivity extends MyAdapterActivity implements AuthenticationManager.AuthenticationManagerCallback {
 
     RocketChatClient api;
 
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPref;
-    private String TAG = "LoginActivity";
-
 
     //on activity result request codes. DO NOT CHANGE!
     private int ACTIVITY_RESULT_FACEBOOK_REQUEST_CODE = 64206;
     private int ACTIVITY_RESULT_TWITTER_REQUEST_CODE = 140;
     private int ACTIVITY_RESULT_GOOGLE_REQUEST_CODE = 150;
 
-
-    //sign in instances
-    private TwitterLoginButton twitterLoginButton;
-    private CallbackManager facebookCallbackManager;
-
     //holds if user connected
     boolean userConnected;
-    private Button login;
     private Handler uiThread;
+
+
+    //new instances
+    private AuthenticationManager authenticationManager;
+    private LoginViewsManager loginViewsManager;
+    private String TAG = "ozvi";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         //connect().create().start();
         setContentView(R.layout.activity_login);
-
         uiThread = new Handler(getMainLooper());
         //to be set BEFORE setContentView
         //prepareTwitter();
         //checkIfUserConnected();
 
-        //setUpFacebook();
-        //setUpTwitter();
-
-        login = (Button) findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onLoginButtonClicked();
-            }
-        });
 
         getSupportActionBar().setTitle("RocketChat Login");
         api = ((RocketChatApplication) getApplicationContext()).getRocketChatAPI();
@@ -102,6 +64,17 @@ public class LoginActivity extends MyAdapterActivity {
         editor = sharedPref.edit();
 
 
+
+
+
+        //to move to chat activity
+        authenticationManager = new AuthenticationManager();
+        authenticationManager.popLoginDialog(this, api, this);
+    }
+
+    @Override
+    public void onLoginApproved() {
+        new LoginViewsManager().userLoggedIn(this);
     }
 
     private void checkIfUserConnected() {
@@ -115,64 +88,12 @@ public class LoginActivity extends MyAdapterActivity {
     }
 
 
-    private void prepareTwitter() {
-        TwitterConfig config = new TwitterConfig.Builder(this)
-                .logger(new DefaultLogger(Log.DEBUG))
-                .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.com_twitter_sdk_android_CONSUMER_KEY), getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET)))
-                .debug(true)
-                .build();
-        Twitter.initialize(config);
-    }
-
-    /* facebook setup start **/
-    private void setUpFacebook() {
-        facebookCallbackManager = CallbackManager.Factory.create();
-        LoginManager.getInstance().registerCallback(facebookCallbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        userConnected = true;
-                        //navigate to new menu
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        Log.i(TAG, "setUpFacebook: login failed!");
-                    }
-                });
-    }
-
-
-    private void setUpTwitter() {
-        twitterLoginButton = findViewById(R.id.login_button_twitter);
-        twitterLoginButton.setCallback(new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                Log.i(TAG, "SetupTwitter: login success!");
-                userConnected = true;
-                //navigate to new menu
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                Log.i(TAG, "SetupTwitter: login failed!");
-            }
-        });
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ACTIVITY_RESULT_FACEBOOK_REQUEST_CODE) {
-            facebookCallbackManager.onActivityResult(requestCode, resultCode, data);
+            authenticationManager.informFacebookCallback(requestCode, resultCode, data);
         } else if (requestCode == ACTIVITY_RESULT_TWITTER_REQUEST_CODE) {
-            // Pass the activity result to the login button.
-            twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+            authenticationManager.informTwitterCallback(requestCode, resultCode, data);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -180,47 +101,8 @@ public class LoginActivity extends MyAdapterActivity {
 
 
 
-    void onLoginSuccess(final Token token) {
-        uiThread.post(new Runnable() {
-            @Override
-            public void run() {
-                ((RocketChatApplication) getApplicationContext()).setToken(token.getAuthToken());
-                AppUtils.showToast(LoginActivity.this, "Login successful", true);
-                Intent intent = new Intent(LoginActivity.this, RoomActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-    }
-
-
     void onLoginError(RocketChatException error) {
         AppUtils.showToast(LoginActivity.this, error.getMessage(), true);
-    }
-
-    void onLoginButtonClicked() {
-        if (api.getWebsocketImpl().getSocket().getState() == Socket.State.CONNECTED) {
-            api.login("itztik2", "esofesof", new LoginCallback() {
-                @Override
-                public void onLoginSuccess(Token token) {
-                    Log.i(TAG, "onLoginSuccess: ");
-                    editor.putString("username", token.getAuthToken().toString());
-                    editor.putString("password", token.getAuthToken().toString());
-                    editor.commit();
-                    LoginActivity.this.onLoginSuccess(token);
-                }
-
-                @Override
-                public void onError(RocketChatException error) {
-                    Log.i(TAG, "onError: "+ error.getLocalizedMessage());
-                    Log.i(TAG, "onError: "+ error.getMessage());
-                    Log.i(TAG, "onError: "+ error.getStackTrace());
-                }
-            });
-        } else {
-            AppUtils.showToast(LoginActivity.this, "Not connected to server", true);
-        }
     }
 
 
@@ -265,6 +147,7 @@ public class LoginActivity extends MyAdapterActivity {
         api.getWebsocketImpl().getConnectivityManager().unRegister(this);
         super.onDestroy();
     }
+
 
 }
 

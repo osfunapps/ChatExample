@@ -1,4 +1,4 @@
-package com.osapps.chat.views.messageslist; /*******************************************************************************
+package com.osapps.chat.utils.views.messageslist; /*******************************************************************************
  * Copyright 2016 stfalcon.com
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -18,7 +18,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp" />
 
-    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+    <com.osapps.chat.utils.views.TwitterLoginButton
         android:id="@+id/login_button_twitter"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -26,7 +26,7 @@
         android:enabled="true"
         />
 
-    <Button
+ <!--   <Button
         android:id="@+id/login"
         android:text="@string/login"
         android:layout_width="wrap_content"
@@ -36,28 +36,5 @@
         android:layout_gravity="center_horizontal"
         />
 
-    <EditText
-        android:id="@+id/loading_dialog_text"
-        android:hint="Write your name here"
-        android:visibility="gone"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:textStyle="bold"
-        android:layout_marginTop="10dp"
-        android:textSize="15sp"
-        android:lineSpacingExtra="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
-
-    <Button
-        android:id="@+id/positiveBtn"
-        android:visibility="gone"
-        android:text="@string/ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        />
-
+-->
 </LinearLayout>

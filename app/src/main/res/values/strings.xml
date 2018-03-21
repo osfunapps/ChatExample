@@ -26,5 +26,8 @@
     <string name="com.twitter.sdk.android.CONSUMER_KEY" translatable="false">ZzqL1dounpJ4VnhHGpeh5qPeK</string>
     <string name="com.twitter.sdk.android.CONSUMER_SECRET" translatable="false">uOoxV7PnqjfUwA9bEcyts3kdHbQlRTiBg3fczmMMVcgHX38pzK</string>
     <string name="app_short_name">itztikapp</string>
+    <string name="chat_name_approved">Name Approved!</string>
+    <string name="chat_name_not_approved">Name not approved! Please use only english alphabet</string>
+    <string name="login_approved">login approved</string>
 
 </resources>

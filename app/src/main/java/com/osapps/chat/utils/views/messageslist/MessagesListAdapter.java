@@ -1,4 +1,4 @@
-package com.osapps.chat.views.messageslist; /*******************************************************************************
+package com.osapps.chat.utils.views.messageslist; /*******************************************************************************
  * Copyright 2016 stfalcon.com
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +22,11 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.rocketchat.core.WebsocketImpl;
 import com.stfalcon.chatkit.R;
 import com.stfalcon.chatkit.commons.ImageLoader;
 import com.stfalcon.chatkit.commons.ViewHolder;

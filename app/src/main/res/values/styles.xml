@@ -15,6 +15,10 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="FullHeightDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="Message.TextView" parent="android:TextAppearance">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/colorPrimaryText</item>

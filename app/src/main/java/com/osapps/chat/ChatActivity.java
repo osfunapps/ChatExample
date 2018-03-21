@@ -10,8 +10,8 @@ import android.view.MenuItem;
 import com.osapps.chat.activity.MyAdapterActivity;
 import com.osapps.chat.socket.ChatRoom;
 import com.osapps.chat.socket.RocketChatClient;
-import com.osapps.chat.views.messageslist.MessagesList;
-import com.osapps.chat.views.messageslist.MessagesListAdapter;
+import com.osapps.chat.utils.views.messageslist.MessagesList;
+import com.osapps.chat.utils.views.messageslist.MessagesListAdapter;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.data.lightdb.collection.Collection;
 import com.rocketchat.common.data.lightdb.document.UserDocument;
@@ -19,7 +19,6 @@ import com.rocketchat.core.callback.HistoryCallback;
 import com.rocketchat.core.callback.LoginCallback;
 import com.rocketchat.core.callback.MessageCallback;
 import com.rocketchat.core.model.Token;
-import com.stfalcon.chatkit.messages.MessageHolders;
 import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.utils.DateFormatter;
 

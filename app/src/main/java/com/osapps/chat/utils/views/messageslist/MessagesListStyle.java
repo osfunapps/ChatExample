@@ -1,4 +1,4 @@
-package com.osapps.chat.views.messageslist; /*******************************************************************************
+package com.osapps.chat.utils.views.messageslist; /*******************************************************************************
  * Copyright 2016 stfalcon.com
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,6 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 
-import com.osapps.chat.socket.Socket;
 import com.stfalcon.chatkit.R;
 import com.stfalcon.chatkit.commons.Style;
 
