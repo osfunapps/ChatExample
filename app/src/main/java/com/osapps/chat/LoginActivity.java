@@ -20,6 +20,7 @@ import com.facebook.login.LoginResult;
 import com.osapps.chat.activity.MyAdapterActivity;
 import com.osapps.chat.application.RocketChatApplication;
 import com.osapps.chat.socket.RocketChatClient;
+import com.osapps.chat.socket.callback.ChannelCreationCallback;
 import com.osapps.chat.socket.callback.RegisterCallback;
 import com.osapps.chat.utils.AppUtils;
 import com.rocketchat.common.RocketChatException;
@@ -74,7 +75,6 @@ public class LoginActivity extends MyAdapterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         //connect().create().start();
         setContentView(R.layout.activity_login);
 
@@ -100,6 +100,8 @@ public class LoginActivity extends MyAdapterActivity {
         api.connect(this);
         sharedPref = getPreferences(MODE_PRIVATE);
         editor = sharedPref.edit();
+
+
     }
 
     private void checkIfUserConnected() {
@@ -199,7 +201,7 @@ public class LoginActivity extends MyAdapterActivity {
 
     void onLoginButtonClicked() {
         if (api.getWebsocketImpl().getSocket().getState() == Socket.State.CONNECTED) {
-            api.login("itzik1", "itzik1", new LoginCallback() {
+            api.login("itztik2", "esofesof", new LoginCallback() {
                 @Override
                 public void onLoginSuccess(Token token) {
                     Log.i(TAG, "onLoginSuccess: ");

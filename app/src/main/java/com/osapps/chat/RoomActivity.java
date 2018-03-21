@@ -109,7 +109,7 @@ public class RoomActivity extends MyAdapterActivity {
     private void addChannel() {
         //create channel
         //admin user "admin" "esof$Rocket5173"
-        api.createChannel("new_channel", new ChannelCreationCallback() {
+        api.createChannel(getString(R.string.app_short_name),"astroSecondChannel", new ChannelCreationCallback() {
             @Override
             public void onChannelCreated() {
                 api.getSubscriptions(new SimpleListCallback<Subscription>() {

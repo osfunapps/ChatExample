@@ -489,8 +489,8 @@ public class WebsocketImpl implements SocketListener {
     }
 
 
-    public void createChannel(String channelName, ChannelCreationCallback callback) {
-        socket.sendData(CoreSubRPC.createChannel(channelName));
+    public void createChannel(String appShortName, String channelName, ChannelCreationCallback callback) {
+        socket.sendData(CoreSubRPC.createChannel(appShortName, channelName));
         callback.onChannelCreated();
     }
 }

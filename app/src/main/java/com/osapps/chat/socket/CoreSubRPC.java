@@ -62,8 +62,8 @@ public class CoreSubRPC extends SubRPC {
         return getRemoteUnsubscriptionObject(subId).toString();
     }
 
-    public static String createChannel(String channelName) {
-        return getCreateChannelObject(channelName).toString();
+    public static String createChannel(String appShortName, String channelName) {
+        return getCreateChannelObject(appShortName, channelName).toString();
     }
 
 

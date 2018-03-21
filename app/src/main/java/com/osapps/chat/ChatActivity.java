@@ -178,7 +178,6 @@ public class ChatActivity extends MyAdapterActivity implements
     }
 
     private void initAdapter() {
-
         messagesAdapter = new MessagesListAdapter<>(api.getWebsocketImpl().getMyUserId());
         messagesAdapter.enableSelectionMode(this);
         messagesAdapter.setLoadMoreListener(this);

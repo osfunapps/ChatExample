@@ -38,12 +38,12 @@ public class SubRPC {
         return object;
     }
 
-    protected static JSONObject getCreateChannelObject(String channelName) {
+    protected static JSONObject getCreateChannelObject(String appId, String channelName) {
         JSONObject object = new JSONObject();
         try {
             object.put("msg", "method");
             object.put("method", "createChannel");
-            object.put("id", "85");
+            object.put("id", appId);
 
             JSONArray params = new JSONArray();
             params.put(channelName);

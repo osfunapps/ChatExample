@@ -389,8 +389,8 @@ public class RocketChatClient {
         websocketImpl.removeAllSubscriptions(roomId);
     }
 
-    public void createChannel(String channelName, ChannelCreationCallback callback) {
-        websocketImpl.createChannel(channelName, callback);
+    public void createChannel(String appShortName, String channelName, ChannelCreationCallback callback) {
+        websocketImpl.createChannel(appShortName, channelName, callback);
 
     }
 
