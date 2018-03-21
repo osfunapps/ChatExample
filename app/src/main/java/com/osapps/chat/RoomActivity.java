@@ -4,29 +4,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.UiThread;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.SearchView;
 
+import com.osapps.chat.activity.MyAdapterActivity;
+import com.osapps.chat.adapter.RoomAdapter;
+import com.osapps.chat.application.RocketChatApplication;
 import com.osapps.chat.socket.RocketChatClient;
 import com.osapps.chat.socket.callback.ChannelCreationCallback;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.listener.SimpleListCallback;
 import com.rocketchat.core.callback.LoginCallback;
-import com.rocketchat.core.model.Room;
 import com.rocketchat.core.model.Subscription;
 import com.rocketchat.core.model.Token;
 
-
 import java.util.List;
-
-import com.osapps.chat.activity.MyAdapterActivity;
-import com.osapps.chat.adapter.RoomAdapter;
-import com.osapps.chat.application.RocketChatApplication;
-import com.osapps.chat.utils.AppUtils;
 
 public class RoomActivity extends MyAdapterActivity {
 
@@ -37,11 +32,12 @@ public class RoomActivity extends MyAdapterActivity {
     RecyclerView recyclerView;
     private Handler mainLooperHandler;
     private Menu menu;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_room);
-        recyclerView = findViewById(R.id.my_recycler_view);
+        setViews();
         getSupportActionBar().setTitle("Chat Rooms");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         api = ((RocketChatApplication) getApplicationContext()).getRocketChatAPI();
@@ -67,6 +63,15 @@ public class RoomActivity extends MyAdapterActivity {
 
     }
 
+    private  void setViews(){
+        recyclerView = findViewById(R.id.rooms_recycler_view);
+        setSearchView();
+    }
+    private void setSearchView() {
+        searchView = (SearchView) findViewById(R.id.companies_search);
+        SearchViewHandler searchViewHandler = new SearchViewHandler();
+        searchViewHandler.handleSearchView(this, searchView);
+    }
     public void onGetSubscriptions(final List<Subscription> list) {
         mainLooperHandler.post(new Runnable() {
             @Override
