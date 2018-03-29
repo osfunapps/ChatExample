@@ -54,7 +54,6 @@ public class RoomActivity extends MyAdapterActivity {
             @Override
             public void onSuccess(List<Subscription> list) {
                 RoomActivity.this.onGetSubscriptions(list);
-
             }
 
             @Override

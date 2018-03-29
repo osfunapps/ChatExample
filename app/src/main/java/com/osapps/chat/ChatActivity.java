@@ -2,8 +2,10 @@ package com.osapps.chat;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,9 +17,12 @@ import com.osapps.chat.utils.views.messageslist.MessagesListAdapter;
 import com.rocketchat.common.RocketChatException;
 import com.rocketchat.common.data.lightdb.collection.Collection;
 import com.rocketchat.common.data.lightdb.document.UserDocument;
+import com.rocketchat.common.listener.SimpleListCallback;
+import com.rocketchat.common.network.Socket;
 import com.rocketchat.core.callback.HistoryCallback;
 import com.rocketchat.core.callback.LoginCallback;
 import com.rocketchat.core.callback.MessageCallback;
+import com.rocketchat.core.model.Subscription;
 import com.rocketchat.core.model.Token;
 import com.stfalcon.chatkit.messages.MessageInput;
 import com.stfalcon.chatkit.utils.DateFormatter;
@@ -73,62 +78,174 @@ public class ChatActivity extends MyAdapterActivity implements
 
     private Date lastTimestamp;
     private Handler mainThreadHanlder;
+    private Handler mainLooperHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_chat);
         super.onCreate(savedInstanceState);
+
+        mainLooperHandler = new Handler(getMainLooper());
         input = findViewById(R.id.input);
         messagesList = findViewById(R.id.messagesList);
         mainThreadHanlder = new Handler(getMainLooper());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         api = ((RocketChatApplication) getApplicationContext()).getRocketChatAPI();
+        getSupportActionBar().setTitle("Chat Activity");
 
-        String roomId = getIntent().getStringExtra("roomId");
-        userId = roomId.replace(api.getWebsocketImpl().getMyUserId(), "");
-        System.out.println("room id is " + roomId);
         api.getWebsocketImpl().getConnectivityManager().register(this);
-        chatRoom = api.getChatRoomFactory().getChatRoomById(roomId);
-        getSupportActionBar().setTitle(chatRoom.getRoomData().name());
-        if (getCurrentUser() !=null) {
-            updateUserStatus(getCurrentUser().status().toString());
-        }
+        api.subscribeActiveUsers(null);
+        api.subscribeUserData(null);
+        api.setReconnectionStrategy(null);
+        api.connect(this);
+    }
 
-        api.getDbManager().getUserCollection().register(userId, new Collection.Observer<UserDocument>() {
+    @Override
+    public void onConnect(String sessionID) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
-            public void onUpdate(Collection.Type type, UserDocument document) {
-                switch (type) {
-                    case ADDED:
-                        updateUserStatus(document.status().toString());
-                        break;
-                    case CHANGED:
-                        updateUserStatus(document.status().toString());
-                        break;
-                    case REMOVED:
-                        updateUserStatus("UNAVAILABLE");
-                        break;
+            public void run() {
+
+                if (api.getWebsocketImpl().getSocket().getState() == Socket.State.CONNECTED) {
+                    api.login("itztik2", "esofesof", new LoginCallback() {
+                        @Override
+                        public void onLoginSuccess(Token token) {
+                            ChatActivity.this.onLoginSuccess();
+
+                            //Log.i(TAG, "onLoginSuccess: ");
+                            //LoginActivity.this.justNowLoginApproved(token);
+                        }
+
+                        @Override
+                        public void onError(RocketChatException error) {
+                         //   Log.i(TAG, "onError: " + error.getLocalizedMessage());
+                           // Log.i(TAG, "onError: " + error.getMessage());
+                        }
+                    });
                 }
+
             }
         });
-
-        chatRoom.subscribeRoomMessageEvent(null, this);
-        chatRoom.subscribeRoomTypingEvent(null, this);
-        chatRoom.getChatHistory(50, lastTimestamp, null, new HistoryCallback() {
+        /*String token = ((RocketChatApplication)getApplicationContext()).getToken();
+        api.loginUsingToken(token, new LoginCallback() {
             @Override
-            public void onLoadHistory(List<com.rocketchat.core.model.Message> list, int unreadNotLoaded) {
-                ChatActivity.this.onLoadHistory(list, unreadNotLoaded);
+            public void onLoginSuccess(Token token) {
+                ChatActivity.this.onLoginSuccess();
             }
 
             @Override
             public void onError(RocketChatException error) {
 
             }
-        });
-
-        afterViewsSet();
+        });*/
 
     }
+
+    void onLoginSuccess()  {
+        System.out.println("connected!");
+        api.subscribeActiveUsers(null);
+        api.subscribeUserData(null);
+
+
+
+
+        //ADDED get all rooms
+        api.getSubscriptions(new SimpleListCallback<Subscription>() {
+            @Override
+            public void onSuccess(List<Subscription> list) {
+                ChatActivity.this.onSubscriptionsGetSuccess(list);
+            }
+
+            @Override
+            public void onError(RocketChatException error) {
+                System.out.println(error);
+            }
+        });
+
+      /*  Snackbar
+                .make(findViewById(R.id.chat_activity), R.string.connected, Snackbar.LENGTH_LONG)
+                .show();*/
+    }
+
+    private void onSubscriptionsGetSuccess(List<Subscription> list) {
+        onGetSubscriptions(list);
+    }
+
+
+    //ADDED get all rooms
+    public void onGetSubscriptions(final List<Subscription> list) {
+
+        mainLooperHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                api.subscribeActiveUsers(null);
+                api.subscribeUserData(null);
+
+
+                api.getChatRoomFactory().createChatRooms(list);
+
+
+                //getting the general room id
+                 String roomId = api.getChatRoomFactory().getChatRoomByName("general").getRoomData().roomId();
+
+
+                //stopped here! need to know if works
+                //userId = roomId.replace("ScA8kHMaxGF9TC4iX", "");
+
+
+                //todo: emable this!
+                 userId = roomId.replace(api.getWebsocketImpl().getMyUserId(), "");
+
+                chatRoom = api.getChatRoomFactory().getChatRoomById(roomId);
+                chatRoom.subscribeRoomMessageEvent(null, ChatActivity.this);
+                chatRoom.subscribeRoomTypingEvent(null, ChatActivity.this);
+
+                //todo: enable this!
+                // getSupportActionBar().setTitle(chatRoom.getRoomData().name());
+                if (getCurrentUser() !=null) {
+                    updateUserStatus(getCurrentUser().status().toString());
+                }
+
+                api.getDbManager().getUserCollection().register(userId, new Collection.Observer<UserDocument>() {
+                    @Override
+                    public void onUpdate(Collection.Type type, UserDocument document) {
+                        switch (type) {
+                            case ADDED:
+                                updateUserStatus(document.status().toString());
+                                break;
+                            case CHANGED:
+                                updateUserStatus(document.status().toString());
+                                break;
+                            case REMOVED:
+                                updateUserStatus("UNAVAILABLE");
+                                break;
+                        }
+                    }
+                });
+
+                chatRoom.subscribeRoomMessageEvent(null, ChatActivity.this);
+                chatRoom.subscribeRoomTypingEvent(null, ChatActivity.this);
+                chatRoom.getChatHistory(50, lastTimestamp, null, new HistoryCallback() {
+                    @Override
+                    public void onLoadHistory(List<com.rocketchat.core.model.Message> list, int unreadNotLoaded) {
+                        ChatActivity.this.onLoadHistory(list, unreadNotLoaded);
+                    }
+
+                    @Override
+                    public void onError(RocketChatException error) {
+
+                    }
+                });
+
+                afterViewsSet();
+            }
+        });
+
+    }
+
+
 
     void updateUserStatus(final String status) {
         mainThreadHanlder.post(new Runnable() {
@@ -261,32 +378,7 @@ public class ChatActivity extends MyAdapterActivity implements
     }
 
 
-    void showConnectedSnackbar() {
-        System.out.println("connected!");
-      /*  Snackbar
-                .make(findViewById(R.id.chat_activity), R.string.connected, Snackbar.LENGTH_LONG)
-                .show();*/
-    }
 
-    @Override
-    public void onConnect(String sessionID) {
-        String token = ((RocketChatApplication)getApplicationContext()).getToken();
-        api.loginUsingToken(token, new LoginCallback() {
-            @Override
-            public void onLoginSuccess(Token token) {
-                api.subscribeActiveUsers(null);
-                api.subscribeUserData(null);
-                chatRoom.subscribeRoomMessageEvent(null, ChatActivity.this);
-                chatRoom.subscribeRoomTypingEvent(null, ChatActivity.this);
-            }
-
-            @Override
-            public void onError(RocketChatException error) {
-
-            }
-        });
-        showConnectedSnackbar();
-    }
 
     @Override
     public void onDisconnect(boolean closedByServer) {

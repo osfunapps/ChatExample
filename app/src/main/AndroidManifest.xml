@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
-    <activity android:name=".LoginActivity">
+    <activity android:name=".ChatActivity">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +21,7 @@
         </intent-filter>
     </activity>
     <activity android:name=".RoomActivity" />
-    <activity android:name=".ChatActivity" />
+    <!--<activity android:name=".ChatActivity" /> -->
 
 
     <!-- facebook -->

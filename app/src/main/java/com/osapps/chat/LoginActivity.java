@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -68,8 +69,18 @@ public class LoginActivity extends MyAdapterActivity implements AuthenticationMa
 
 
         //to move to chat activity
+
         authenticationManager = new AuthenticationManager();
         authenticationManager.popLoginDialog(this, api, this);
+
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onLoginButtonClicked();
+            }
+        },4000);
     }
 
     @Override
@@ -146,6 +157,44 @@ public class LoginActivity extends MyAdapterActivity implements AuthenticationMa
     protected void onDestroy() {
         api.getWebsocketImpl().getConnectivityManager().unRegister(this);
         super.onDestroy();
+    }
+
+    public void onLoginButtonClicked() {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (api.getWebsocketImpl().getSocket().getState() == Socket.State.CONNECTED) {
+                    api.login("itztik2", "esofesof", new LoginCallback() {
+                        @Override
+                        public void onLoginSuccess(Token token) {
+                            Log.i(TAG, "onLoginSuccess: ");
+                            LoginActivity.this.justNowLoginApproved(token);
+                        }
+
+                        @Override
+                        public void onError(RocketChatException error) {
+                            Log.i(TAG, "onError: " + error.getLocalizedMessage());
+                            Log.i(TAG, "onError: " + error.getMessage());
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    private void justNowLoginApproved(final Token token) {
+        uiThread.post(new Runnable() {
+            @Override
+            public void run() {
+                ((RocketChatApplication) getApplicationContext()).setToken(token.getAuthToken());
+                AppUtils.showToast(LoginActivity.this, "Login successful", true);
+                Intent intent = new Intent(LoginActivity.this, RoomActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
 
